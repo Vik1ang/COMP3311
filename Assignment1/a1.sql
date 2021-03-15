@@ -8,7 +8,7 @@ order by pid asc;
 
 -- 2
 create or replace view Q2(pid, firstname, lastname) as
-select *
+select pid, firstname, lastname
 from person
 where pid not in (select pid
                   from client
@@ -38,7 +38,7 @@ order by brand, id, premium desc, sub.pno;
 
 -- 4
 create or replace view Q4(pid, firstname, lastname) as
-select *
+select pid, firstname, lastname
 from person
 where pid in (select pid
               from staff
@@ -125,7 +125,7 @@ order by pid asc;
 
 -- 10
 create or replace function staffcount(pno integer)
-    returns integer
+    returns bigint
 as
 $body$
 select count(1)
@@ -145,10 +145,7 @@ from (select rb.sid
       from policy p
       where p.pno = $1) sub
 $body$
-    LANGUAGE 'sql'
-    VOLATILE
-    CALLED ON NULL INPUT
-    SECURITY INVOKER;
+    LANGUAGE 'sql';
 
 -- 11
 create or replace procedure renew(pno integer) as
