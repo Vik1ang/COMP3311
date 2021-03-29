@@ -240,73 +240,58 @@ execute procedure insure_create();
 
 insert into insured_by (cid, pno)
 values (1, 7);
--- 12
---
---
--- create trigger check_insure
---     before insert or update
---     on insured_by
---     for each row
--- execute procedure insure_create();
---
--- create function check_rate_create() returns trigger
--- as
--- $$
--- declare
---     p_pid integer;
--- begin
---     select
---     from person
---              left join staff s on person.pid = s.pid
---     where s.sid = old.sid
---     into p_pid;
---     if p_pid not in (select p.pid
---                      from rating_record rr
---                               left join coverage c on rr.coid = c.coid
---                               left join insured_by ib on c.pno = ib.pno
---                               left join client c2 on ib.cid = c2.cid
---                               left join person p on c2.pid = p.pid
---                      where rid = old.rid) then
---         insert into rated_by(sid, rid, rdate, comments)
---         values (old.sid, old.rid, old.rdate, old.comments);
---     end if;
--- end;
--- $$
---     language plpgsql;
---
---
--- create trigger check_rate
---     before insert or update
---     on rated_by
---     for each row
--- execute procedure check_rate_create();
---
--- create function check_under_create() returns trigger as
--- $$
--- declare
---     p_pid integer;
--- begin
---     select p.pid
---     from person p
---              left join staff s on s.pid = p.pid
---     into p_pid;
---     if p_pid not in (select p2.pid
---                      from underwriting_record ur
---                               left join policy p on ur.pno = p.pno
---                               left join insured_by ib on p.pno = ib.pno
---                               left join client c on ib.cid = c.cid
---                               left join person p2 on c.pid = p2.pid
---                      where ur.urid = old.urid) then
---         insert into underwritten_by(sid, urid, wdate, comments) values (old.sid, old.urid, old.wdate, old.comments);
---     end if;
--- end;
--- $$
---     language plpgsql;
---
--- create trigger check_under
---     before insert or update
---     on underwritten_by
---     for each row
--- execute procedure check_under_create();
+
+create function check_rate_create() returns trigger
+as
+$$
+begin
+    if (new.sid in (select cid
+                    from insured_by ib
+                    where pno = (select distinct pno
+                                 from rated_by rb
+                                          left join rating_record rr on rb.rid = rr.rid
+                                          left join coverage c on rr.coid = c.coid
+                                 where rb.rid = new.rid
+                                   and rb.sid = new.sid
+                                   and rb.comments = new.comments
+                                   and rb.rdate = new.rdate)
+    )) then
+        raise exception 'same cid and sid';
+    end if;
+    return new;
+end;
+$$
+    language plpgsql;
+
+
+create trigger check_rate
+    before insert or update
+    on rated_by
+    for each row
+execute procedure check_rate_create();
+
+create function check_under_create() returns trigger as
+$$
+begin
+    if (new.sid in (select cid
+                    from insured_by ib
+                             left join underwriting_record ur on ib.pno = ur.pno
+                             left join underwritten_by ub on ur.urid = ub.urid
+                    where ub.sid = new.sid
+                      and ub.urid = new.urid
+                      and ub.comments = new.comments
+                      and ub.wdate = new.wdate)) then
+        raise exception 'same cid and sid';
+    end if;
+    return new;
+end;
+$$
+    language plpgsql;
+
+create trigger check_under
+    before insert or update
+    on underwritten_by
+    for each row
+execute procedure check_under_create();
 
 
