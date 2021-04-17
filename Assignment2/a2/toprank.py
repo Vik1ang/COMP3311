@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sqlite3
 import sys
 
@@ -11,7 +12,7 @@ if __name__ == '__main__':
     select distinct m.title,
                 '(' || ifnull(m.year || ', ', '') || ifnull(m.content_rating || ', ', '') ||
                 ifnull(m.lang, '') || ')',
-                '[' || ifnull(r.imdb_score || ', ', '') || ifnull(r.num_voted_users, '') || ']',
+                '[' || ifnull(printf('%.1f', r.imdb_score) || ', ', '') || ifnull(r.num_voted_users, '') || ']',
                 (select group_concat(g1.genre) from genre g1 where g1.movie_id = g.movie_id order by g1.genre)
     from movie m
          left join acting a on m.id = a.movie_id
@@ -34,7 +35,10 @@ if __name__ == '__main__':
 
     genre = []
     if sys.argv[1] != '':
-        genre = sys.argv[1].split('&')
+        genre_list = sys.argv[1].split('&')
+        for _g in genre_list:
+            _g_new = _g.lower().title()
+            genre.append(_g_new)
         sql_top_rank += ' and g.genre in ('
         genre = set(genre)
         genre = [i for i in genre]
@@ -46,7 +50,6 @@ if __name__ == '__main__':
         sql_top_rank += ')'
 
     sql_top_rank += ' order by r.imdb_score desc, r.num_voted_users desc;'
-
 
     cur = con.cursor()
 

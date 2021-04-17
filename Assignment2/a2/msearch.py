@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sqlite3
 import sys
 
@@ -12,9 +13,9 @@ if __name__ == '__main__':
     sql_movie_search = '''
     select distinct m.title, 
     '(' || ifnull(m.year || ', ', '') || ifnull(m.content_rating || ', ', '') ||
-                ifnull(r.imdb_score, '') || ')',
+                ifnull(printf('%.1f', r.imdb_score), '') || ')',
                 '[' || (select group_concat(g1.genre) from genre g1 where g1.movie_id = g.movie_id order by g1.genre) ||
-                ']'
+                ']', m.year, d.name
     from movie m
          left join acting a on m.id = a.movie_id
          left join actor a2 on a.actor_id = a2.id
@@ -39,8 +40,7 @@ if __name__ == '__main__':
         else:
             sql_movie_search = sql_movie_search + 'and ' + sql_search
 
-    sql_movie_search = sql_movie_search + ' order by m.year desc;'
-    print(sql_movie_search)
+    sql_movie_search = sql_movie_search + ' order by m.year desc, r.imdb_score desc, m.title asc;'
     cur.execute(sql_movie_search, tuple(parameters))
 
     i = 1
