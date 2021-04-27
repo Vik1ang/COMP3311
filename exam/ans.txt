@@ -1,0 +1,42 @@
+-- COMP3311 21T1 Exam Answer Template for Written Questions
+--
+-- Modify the dummy placeholder REPLACE ME for each of
+-- the Questions below
+--
+--
+
+-- Q7
+-- Constraints
+--
+
+REPLACE ME
+
+
+
+-- Q8
+-- Dependencies
+--
+
+REPLACE ME
+
+
+
+-- Q9
+-- Normalization
+--
+
+REPLACE ME
+
+
+
+-- Q10
+-- Serializability
+--
+
+REPLACE ME
+
+
+
+-- Q11
+-- ER: submit it as a separate PDF file
+--
