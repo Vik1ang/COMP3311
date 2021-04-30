@@ -9,7 +9,32 @@
 -- Constraints
 --
 
-REPLACE ME
+create or replace function insert_trigger()
+    returns trigger as
+$insert_trigger$
+begin
+    if new.student_id not between 2000000 and 4999999 then
+        raise exception 'student_id';
+    end if;
+    if new.prac_mark not between 0 and 50 then
+        raise exception 'prac_mark';
+    end if;
+    if regexp_match(new.course_code, '^[A-Z]{4}\d{4}$') is null then
+        raise exception 'course_code';
+    end if;
+    if regexp_match(new.semester, '^\d{2}[a-z]{1}\d{1}') is null then
+        raise exception 'semester';
+    end if;
+    return new;
+end;
+$insert_trigger$
+    language plpgsql;
+
+create trigger insert_check
+    before insert or update
+    on enrolments
+    for each row
+execute procedure insert_trigger();
 
 
 
