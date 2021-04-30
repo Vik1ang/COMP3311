@@ -13,8 +13,13 @@
 
 create or replace view Q1(brewer) as
 -- replace the SQL code below:
-select 'ABC'
-
+select b1.name
+from brewers b1
+         left join beers b2 on b1.id = b2.brewer
+         left join likes l on b2.id = l.beer
+         left join drinkers d on l.drinker = d.id
+where d.name like 'John'
+order by b1.name asc
 ;
 
 
@@ -22,8 +27,11 @@ select 'ABC'
 
 create or replace view Q2(brewer, nbeers) as
 -- replace the SQL code below:
-select 'ABC', 1
-
+select b1.name brewer, count(1) nbeers
+from brewers b1
+         left join beers b2 on b1.id = b2.brewer
+group by b1.name
+order by b1.name
 ;
 
 
@@ -31,8 +39,14 @@ select 'ABC', 1
 
 create or replace view Q3(beer) as
 -- replace the SQL code below:
-select 'ABC'
-
+select distinct b.name beer
+from beers b
+         left join sells s on b.id = s.beer
+         left join bars b2 on s.bar = b2.id
+         left join frequents f on b2.id = f.bar
+         left join drinkers d on f.drinker = d.id
+where d.name like 'John'
+order by b.name asc
 ;
 
 
@@ -40,8 +54,11 @@ select 'ABC'
 
 create or replace view Q4(beer) as
 -- replace the SQL code below:
-select 'ABC'
-
+select distinct b.name
+from beers b
+         left join sells s on b.id = s.beer
+where s.price in (select max(sells.price) from sells)
+order by b.name asc
 ;
 
 
@@ -50,8 +67,14 @@ select 'ABC'
 
 create or replace view Q5(beer, "AvgPrice") as
 -- replace the SQL code below:
-select 'ABC', 1.00
-
+select b.name, avg(s.price)::numeric(5,2)
+from beers b
+         left join sells s on b.id = s.beer
+where s.beer in (select s.beer
+                 from sells s
+                 group by s.beer
+                 having count(s.bar) > 2)
+group by b.name order by b.name
 ;
 
 create or replace view Bar_min_price as
@@ -65,7 +88,18 @@ group  by b.id, b.name
 
 create or replace view Q6(bar, beer) as
 -- replace the SQL code below:
-select 'ABC', 'DEF'
-
+with a1 as (select b.id, b.name as bar, min(s.price) as min_price
+            from Bars b
+                     join Sells s on (b.id = s.bar)
+            group by b.id, b.name)
+select a1.bar, be.name
+from beers be
+         left join sells s2 on be.id = s2.beer
+         left join bars b2 on s2.bar = b2.id
+         left join a1 on a1.id = s2.bar
+where a1.min_price = s2.price
+  and a1.id = s2.bar
+group by a1.bar, be.name
+order by a1.bar, be.name
 ;
 
