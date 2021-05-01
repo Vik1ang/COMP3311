@@ -1,0 +1,49 @@
+-- COMP3311 21T1 Exam Answer Template for Written Questions
+--
+-- Modify the dummy placeholder REPLACE ME for each of
+-- the Questions below (Q8 - Q11)
+
+
+-- Q8
+-- Functional dependencies
+-- (a)
+REPLACE ME
+
+-- (b)
+REPLACE ME
+
+-- (c)
+REPLACE ME
+
+
+-- Q9
+-- Normalization
+-- (a)
+REPLACE ME
+
+-- (b)
+REPLACE ME
+
+-- (c)
+REPLACE ME
+
+
+-- Q10
+-- Serializability
+-- (a)
+REPLACE ME
+
+-- (b)
+REPLACE ME
+
+-- (c)
+REPLACE ME
+
+-- (d)
+REPLACE ME
+
+
+-- Q11
+-- Relational algebra
+--
+REPLACE ME
