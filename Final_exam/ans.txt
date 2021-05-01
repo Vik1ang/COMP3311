@@ -7,43 +7,39 @@
 -- Q8
 -- Functional dependencies
 -- (a)
-REPLACE ME
+BC
 
 -- (b)
-REPLACE ME
-
+A
 -- (c)
-REPLACE ME
+ACE, CDE
 
 
 -- Q9
 -- Normalization
 -- (a)
-REPLACE ME
+ABC, EF, DE
 
 -- (b)
-REPLACE ME
+ABCDEFG
 
 -- (c)
-REPLACE ME
+ABCD, DEF
 
 
 -- Q10
 -- Serializability
 -- (a)
-REPLACE ME
+conflict serializable
 
 -- (b)
-REPLACE ME
-
+not conflict serializable
 -- (c)
-REPLACE ME
-
+is view serializable
 -- (d)
-REPLACE ME
-
+is not view serializable
 
 -- Q11
 -- Relational algebra
 --
-REPLACE ME
+D
